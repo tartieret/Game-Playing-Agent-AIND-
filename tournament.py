@@ -22,7 +22,7 @@ from sample_players import (RandomPlayer, open_move_score,
                             improved_score, center_score)
 from game_agent import *
 
-NUM_MATCHES = 10  # number of matches against each opponent
+NUM_MATCHES = 20  # number of matches against each opponent
 TIME_LIMIT = 150  # number of milliseconds before timeout
 
 DESCRIPTION = """

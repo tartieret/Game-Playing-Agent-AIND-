@@ -22,9 +22,8 @@ def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
 
-    Implements the following heuristics:
-
-    score = len(current player possible moves) - 1.5*len(opponent moves)
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
 
     Parameters
     ----------
@@ -53,7 +52,18 @@ def custom_score(game, player):
     own_moves = game.get_legal_moves(player)
     opp_moves = game.get_legal_moves(opponent_player)
 
-    return float( len(own_moves)-1.5*len(opp_moves))
+    own_next_moves = len(own_moves)
+    for move in own_moves:
+        next_game = game.forecast_move(move)
+        own_next_moves += len(next_game.get_legal_moves(player))
+
+    opp_next_moves = len(opp_moves)
+    for move in opp_moves:
+        next_game = game.forecast_move(move)
+        opp_next_moves += len(next_game.get_legal_moves(opponent_player))
+
+    return float(own_next_moves-opp_next_moves)
+
 
 
 def custom_score_2(game, player):
@@ -167,8 +177,9 @@ def custom_score_4(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
 
-    Note: this function should be called from within a Player instance as
-    `self.score()` -- you should not need to call this function directly.
+    Implements the following heuristics:
+
+    score = len(current player possible moves) - 1.5*len(opponent moves)
 
     Parameters
     ----------
@@ -197,18 +208,7 @@ def custom_score_4(game, player):
     own_moves = game.get_legal_moves(player)
     opp_moves = game.get_legal_moves(opponent_player)
 
-    own_next_moves = len(own_moves)
-    for move in own_moves:
-        next_game = game.forecast_move(move)
-        own_next_moves += len(next_game.get_legal_moves(player))
-
-    opp_next_moves = len(opp_moves)
-    for move in opp_moves:
-        next_game = game.forecast_move(move)
-        opp_next_moves += len(next_game.get_legal_moves(opponent_player))
-
-    return float(own_next_moves-opp_next_moves)
-
+    return float( len(own_moves)-1.5*len(opp_moves))
 
 
 class IsolationPlayer:
