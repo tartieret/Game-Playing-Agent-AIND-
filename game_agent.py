@@ -18,62 +18,13 @@ KNIGHT_DISTANCE_5x5 = [
     [4,1,2,1,4]
 ]
 
-
 def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
 
-    This should be the best heuristic function for your project submission.
+    Implements the following heuristics:
 
-    Note: this function should be called from within a Player instance as
-    `self.score()` -- you should not need to call this function directly.
-
-    Parameters
-    ----------
-    game : `isolation.Board`
-        An instance of `isolation.Board` encoding the current state of the
-        game (e.g., player locations and blocked cells).
-
-    player : object
-        A player instance in the current game (i.e., an object corresponding to
-        one of the player objects `game.__player_1__` or `game.__player_2__`.)
-
-    Returns
-    -------
-    float
-        The heuristic value of the current game state to the specified player.
-    """
-    # calculate the number of available cells in the area around a player
-    blank_spaces = game.get_blank_spaces()
-
-    # get both player locations
-    player_loc = game.get_player_location(player)
-    opponent_loc = game.get_player_location(game.get_opponent(player))
-
-    # this heuristics calculate the number of blank cells in a 5 x 5 area
-    # around each player
-    area_player = 0
-    area_opponent = 0
-
-    for dx in range(-2,3,1):
-        for dy in range(-2,3,1):
-
-            cell_player = (player_loc[0]+dx, player_loc[1]+dy)
-            if cell_player in blank_spaces:
-                area_player+=1
-
-            cell_opponent = (opponent_loc[0]+dx, opponent_loc[1]+dy)
-            if cell_opponent in blank_spaces:
-                area_opponent+=1
-
-    return float(area_player - area_opponent)
-
-def custom_score_2(game, player):
-    """Calculate the heuristic value of a game state from the point of view
-    of the given player.
-
-    Note: this function should be called from within a Player instance as
-    `self.score()` -- you should not need to call this function directly.
+    score = len(current player possible moves) - 1.5*len(opponent moves)
 
     Parameters
     ----------
@@ -96,43 +47,67 @@ def custom_score_2(game, player):
     if game.is_winner(player):
         return float("inf")
 
+
     opponent_player = game.get_opponent(player)
 
-    # get the number of possible moves for each player
-    #own_moves = game.get_legal_moves(player)
-    #opp_moves = game.get_legal_moves(opponent_player)
+    own_moves = game.get_legal_moves(player)
+    opp_moves = game.get_legal_moves(opponent_player)
 
+    return float( len(own_moves)-1.5*len(opp_moves))
+
+
+def custom_score_2(game, player):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player.
+
+    This should be the best heuristic function for your project submission.
+
+    Implements the following heuristics:
+
+    score = [number of blank cells in 5x5 area around active player] 
+            - [number of blank cells in 5x5 area around opponent player] 
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
     # calculate the number of available cells in the area around a player
     blank_spaces = game.get_blank_spaces()
+
+    opponent_player = game.get_opponent(player)
 
     # get both player locations
     player_loc = game.get_player_location(player)
     opponent_loc = game.get_player_location(opponent_player)
 
-       # this heuristics calculate the number of blank cells in a 5 x 5 area
+    # this heuristics calculate the number of blank cells in a 5 x 5 area
     # around each player
     area_player = 0
     area_opponent = 0
 
-    own_future_moves =0
-    opp_future_moves =0
-
-    for i,dx in enumerate(range(-2,3,1)):
-        for j,dy in enumerate(range(-2,3,1)):
+    for dx in range(-2,3,1):
+        for dy in range(-2,3,1):
 
             cell_player = (player_loc[0]+dx, player_loc[1]+dy)
             if cell_player in blank_spaces:
-                #area_player+=1
-                own_future_moves += KNIGHT_DISTANCE_5x5[i][j]
+                area_player+=1
 
             cell_opponent = (opponent_loc[0]+dx, opponent_loc[1]+dy)
             if cell_opponent in blank_spaces:
-                #area_opponent+=1
-                opp_future_moves += KNIGHT_DISTANCE_5x5[i][j]
+                area_opponent+=1
 
-    #return float(area_player - area_opponent)
-    return float(own_future_moves-opp_future_moves)
-
+    return float(area_player-area_opponent)
 
 def custom_score_3(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -222,17 +197,18 @@ def custom_score_4(game, player):
     own_moves = game.get_legal_moves(player)
     opp_moves = game.get_legal_moves(opponent_player)
 
-    own_next_moves = 0
+    own_next_moves = len(own_moves)
     for move in own_moves:
         next_game = game.forecast_move(move)
         own_next_moves += len(next_game.get_legal_moves(player))
 
-    opp_next_moves = 0
+    opp_next_moves = len(opp_moves)
     for move in opp_moves:
         next_game = game.forecast_move(move)
         opp_next_moves += len(next_game.get_legal_moves(opponent_player))
 
     return float(own_next_moves-opp_next_moves)
+
 
 
 class IsolationPlayer:
