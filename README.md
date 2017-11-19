@@ -44,7 +44,7 @@ Score = [number of blank cells in 5x5 area around player] - [number of blank cel
 
 ###	AB_Custom3 – Ratio
 
-This heuristics combine different metrics seen in the previous heuristics
+This heuristics combines different metrics seen in the previous heuristics
 
 Score = [number of blank cells in 5x5 area around player] / [number of blank cells in 5x5 area around opponent] * len(current player moves)/ len(opponent player moves)
 
