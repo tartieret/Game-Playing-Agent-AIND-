@@ -30,38 +30,55 @@ For this project I implemented several heuristics and compared them with the fol
 
 ### AB_Custom – Number of possible moves in the current and next turns
 
-For each player, this heuristics calculates the sum of possible moves in the next two turns. The final score is the difference of the results obtained for each player.
+For each player, this heuristic calculates the sum of possible moves in the next two turns. The final score is the difference of the results obtained for each player.
 
 Score = [Nb possible moves in next 2 turns for active player] – [Nb possible moves in next 2 turns for opponent player]
 
-The idea behind this heuristics is to prevent the agent from selecting positions that do not allow any “escape”. 
+The idea behind this heuristic is to prevent the agent from selecting positions that do not allow any “escape”. 
 
 ###	AB_Custom2 – Number of blank cells in are around each player
 
-This heuristics calculates the number of blank cells in a 5x5 area around the active player. Using this heuristics the agent will tend to move in areas with the highest number of blank cells. It will also stay away from the corners at the beginning of the game. 
+This heuristic calculates the number of blank cells in a 5x5 area around the active player. Using this heuristic the agent will tend to move in areas with the highest number of blank cells. It will also stay away from the corners at the beginning of the game. 
 
 Score = [number of blank cells in 5x5 area around player] - [number of blank cells in 5x5 area around opponent]
 
 ###	AB_Custom3 – Ratio
 
-This heuristics combines different metrics seen in the previous heuristics
+This heuristic combines different metrics seen in the previous heuristics
 
 Score = [number of blank cells in 5x5 area around player] / [number of blank cells in 5x5 area around opponent] * len(current player moves)/ len(opponent player moves)
 
 ###	AB_Custom_4 – Weighted difference between player moves
 
-This heuristics is given by:
+This heuristic is given by:
 Score = len(current player moves) – gamma*len(opponent player moves)
 Where gamma is a positive coefficient.
 
 The idea is to make the player more or less aggressive by adding some weight on the number of possible moves for the opponent player. If gamma is low, the player will focus on moves that open more possibilities for himself. If gamma is high, the player will tend to select moves that reduce the number of possible moves for the opponent.
 I tried different values of gamma and found out that gamma=1.5 gives the best results.
 
+###	AB_Custom_5 – Weighted difference between player moves (gamma=3)
+
+This heuristic is the same than 4) but with gamma=3.
+
+###	AB_Custom_6 – Combination of 2 heuristics
+
+This heuristic combines Custom1 and Custom4: if the number of possible moves is less than 4, then the heuristics is the difference in number of moves in the next two turns (=Custom1). Otherwise, the heuristics uses Custom4. This optimizes the search by increasing the calculation speed and allow to explore the tree at deeper levels.
+
+
 ## Tournament results
 
-![tournament results](tournament.png)
+|    #    |    Opponent          |    ABImprov.    |        |    Custom    |        |    Custom2    |        |    Custom3    |            |     Custom4      |            |     Custom5      |            |     Custom6      |            |
+|---------|----------------------|-----------------|--------------|---------------|---------------|---------------|---------------|---------------|------------|-----------|------------|-----------|------------|-----------|------------|
+|         |                      |    Win          |    Lost      |    Win        |    Lost       |    Win        |    Lost       |    Win        |    Lost    |    Win    |    Lost    |    Win    |    Lost    |    Win    |    Lost    |
+|    1    |    Random            |    37           |    13        |    39         |    1          |    33         |    7          |    39         |    1       |    38     |    2       |    37     |    2       |    35     |    5       |
+|    2    |    MM_Open           |    26           |    14        |    30         |    10         |    19         |    21         |    27         |    13      |    31     |    9       |    29     |    9       |    31     |    9       |
+|    3    |    MM_Center         |    33           |    7         |    31         |    9          |    27         |    13         |    32         |    8       |    24     |    16      |    35     |    16      |    37     |    3       |
+|    4    |    MM_Improved       |    29           |    11        |    26         |    14         |    26         |    14         |    28         |    12      |    29     |    11      |    25     |    11      |    28     |    12      |
+|    5    |    AB_Open           |    21           |    19        |    18         |    22         |    14         |    26         |    23         |    17      |    19     |    21      |    18     |    21      |    23     |    17      |
+|    6    |    AB_Center         |    20           |    20        |    23         |    17         |    17         |    23         |    27         |    13      |    25     |    15      |    20     |    15      |    26     |    14      |
+|    7    |    AB_Imp.           |    17           |    23        |    20         |    20         |    16         |    24         |    17         |    23      |    22     |    18      |    18     |    18      |    19     |    21      |
+|         |    Win Rate          |      65.4%      |         |    66.8%      |          |    54.3%      |          |    68.9%      |            |     67.1%      |            |     64.3%      |            |      71.1%     |            |
 
-The first heuristics (using number of possible moves in the next two turns) outperforms the AB_improved player against the pre-defined agents. This is the heuristics that actually gets the best results overall.
 
-The second heuristics does not get great results. This is most likely due to the fact that the player moves are complex (knight moves) so this heuristics is not capable of evaluating properly how many moves are actually possible in the close area around each player position. 
 
