@@ -5,6 +5,7 @@ and include the results in your report.
 import random
 
 
+
 class SearchTimeout(Exception):
     """Subclass base exception for code clarity. """
     pass
@@ -119,6 +120,7 @@ def custom_score_2(game, player):
 
     return float(area_player-area_opponent)
 
+
 def custom_score_3(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
@@ -210,6 +212,93 @@ def custom_score_4(game, player):
 
     return float( len(own_moves)-1.5*len(opp_moves))
 
+def custom_score_5(game, player):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player.
+
+    Implements the following heuristics:
+
+    score = len(current player possible moves) - 1.5*len(opponent moves)
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    opponent_player = game.get_opponent(player)
+
+    own_moves = game.get_legal_moves(player)
+    opp_moves = game.get_legal_moves(opponent_player)
+
+    return float( len(own_moves)-3*len(opp_moves))
+
+def custom_score_6(game, player):
+    """Calculate the heuristic value of a game state from the point of view
+    of the given player.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+
+    opponent_player = game.get_opponent(player)
+
+    own_moves = game.get_legal_moves(player)
+    opp_moves = game.get_legal_moves(opponent_player)
+
+    own_next_moves = len(own_moves)
+    opp_next_moves = len(opp_moves)
+
+    if own_next_moves<4 and opp_next_moves<4:
+        # use heuristics 1
+        for move in own_moves:
+            next_game = game.forecast_move(move)
+            own_next_moves += len(next_game.get_legal_moves(player))
+
+        for move in opp_moves:
+            next_game = game.forecast_move(move)
+            opp_next_moves += len(next_game.get_legal_moves(opponent_player))
+
+        return float(own_next_moves-opp_next_moves)
+    else:
+        # use heuristics 4
+        float( len(own_next_moves)-1.5*len(opp_next_moves))
 
 class IsolationPlayer:
     """Base class for minimax and alphabeta agents -- this class is never
